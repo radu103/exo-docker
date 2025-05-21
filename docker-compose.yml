@@ -1,0 +1,48 @@
+services:
+
+  exo-docker1:
+    image: radu103/exo-docker:latest
+    ports:
+      - "52415:52415"
+    environment:
+      - HF_TOKEN=your_token_here
+    volumes:
+      - exo_models:/root/.cache/exo/downloads
+    # Enable GPU support
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, compute, utility]    # Keep the container running  
+
+  exo-docker2:
+    image: radu103/exo-docker:latest
+    ports:
+      - "52416:52416"
+    environment:
+      - HF_TOKEN=your_token_here
+    volumes:
+      - exo_models:/root/.cache/exo/downloads
+    # Enable GPU support
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, compute, utility]    # Keep the container running              
+
+networks:
+  default:
+    driver: bridge
+    name: exo-docker
+
+volumes:
+  exo_models:
+    driver: local
+    driver_opts:
+      type: none
+      device: R:/exo-docker/models
+      o: bind
